@@ -23,7 +23,12 @@ const CompanyTable = ({ onEdit }) => {
     await axios.delete(`http://127.0.0.1:8000/api/companies/${id}/`);
     fetchCompanies();
   };
-  
+
+  // Determine page range to display
+  const maxPagesToShow = 5;
+  const startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+  const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
   return (
     <div className="max-w-5xl mx-auto mt-6">
       {/* Search Box */}
@@ -34,7 +39,6 @@ const CompanyTable = ({ onEdit }) => {
         onChange={(e) => setSearch(e.target.value)}
       />
       
-
       {/* Table */}
       <table className="w-full border-collapse border border-gray-200">
         <thead>
@@ -73,9 +77,9 @@ const CompanyTable = ({ onEdit }) => {
         <button className={`px-4 py-2 border ${page === 1 ? "opacity-50 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"}`} disabled={page === 1} onClick={() => setPage(page - 1)}>
           Prev
         </button>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button key={i + 1} className={`mx-2 px-4 py-2 border ${page === i + 1 ? "bg-blue-500 text-white" : "hover:bg-gray-200"}`} onClick={() => setPage(i + 1)}>
-            {i + 1}
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => i + startPage).map((p) => (
+          <button key={p} className={`mx-2 px-4 py-2 border ${page === p ? "bg-blue-500 text-white" : "hover:bg-gray-200"}`} onClick={() => setPage(p)}>
+            {p}
           </button>
         ))}
         <button className={`px-4 py-2 border ${page === totalPages ? "opacity-50 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"}`} disabled={page === totalPages} onClick={() => setPage(page + 1)}>
